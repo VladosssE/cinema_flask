@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Кинотеатр</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='mainmenu-style.css') }}">
+	<script src="{{ url_for('static', filename='js/modal_all.js') }}" defer></script>
+	<script src="{{ url_for('static', filename='js/genres_buttons.js') }}" defer></script>
+	<script src="{{ url_for('static', filename='js/collapse_genre_buttons.js') }}" defer></script>
+	<script src="{{ url_for('static', filename='js/sorting.js') }}" defer></script>
+	<script src="{{ url_for('static', filename='js/film_add.js') }}" defer></script>
+	<script src="{{ url_for('static', filename='js/poster_choose.js') }}" defer></script>
+	<script src="{{ url_for('static', filename='js/film_edit.js') }}" defer></script>
+
+	
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/favicon.png') }}">
+</head>
+<body>
+	<header class="top-panel">
+		<h2>Фильмы</h2>
+
+		{% if films %}
+			<a class="menu-btn" id="filterSortBtn">Фильтр/Сортировка</a>
+		{% endif %}
+
+		{% if current_user.is_authenticated %}
+			<a class="menu-btn" id="openAddFilm">Добавить фильм</a>
+			<a class="menu-btn" href="{{ url_for('auth.logout') }}">Выйти</a>
+		{% else %}
+			<a class="menu-btn" href="{{ url_for('auth.login') }}">
+				Авторизуйтесь, чтобы добавить, изменить либо удалить фильм
+			</a>
+		{% endif %}
+		<form method="get" action="{{ url_for('film_card.list_film') }}" class="search-form">
+			<input type="text" name="q" placeholder="Поиск фильма..." value="{{ request.args.get('q', '') }}" class="search-input">
+			<button type="submit" class="search-button">Найти</button>
+		</form>
+	</header>
+	<main class="films-container">
+		{% for film in films %}
+			<div class="film-card"
+				data-film-id="{{ film.film_id }}"
+				data-genres="{{ film.genres | map(attribute='genre_id') | join(',') }}"
+				data-release-year="{{ film.release_year }}"
+				data-age-rate="{{ film.age_rate }}"
+				data-duration="{{ film.duration }}"
+				data-descr="{{ film.descr|e }}">
+				<img src="{{ url_for('static', filename='images/' + film.image_url) }}" class="film-poster">
+				<div class="film-info">
+					<h3 class="film-title">{{ film.title }}</h3>
+					<h3 class="orig-film-title">{{ film.orig_title }}</h3>
+					<hr class="hor-line"></hr>
+					<p class="film-rating">
+						<span class="rating">Рейтинг (iMDB): {{ film.rating }}</span>
+						<span class="age-rate">{{ film.age_rate }}</span>
+					</p>
+				</div>
+				
+				{% if current_user.is_authenticated %}
+					<div class="film-actions">
+						<button class="edit-btn" onclick="event.stopPropagation(); openEditFilm({{ film.film_id }})">Изменить</button>
+						<form method="POST" action="{{ url_for('film_card.delete_film', film_id=film.film_id) }}" onsubmit="return confirm('Удалить фильм?');">
+							<button type="submit" class="delete-btn">Удалить</button>
+						</form>
+					</div>
+				{% endif %}
+			</div>
+		{% endfor %}
+	</main>
+	<div id="filmInfo" class="modal">
+		<div class="modal-content">
+		<span class="close">&times;</span>
+			<div class="film-page">
+				<div class="left">
+					<img class="poster" id="filmPoster" src="">
+					<p class="film-title"><span id="filmTitle"></span></p>
+					<p class="orig-film-title"><span id="filmOrigTitle"></span></p>
+					<p><strong>Возрастное ограничение:</strong> <span id="filmAge"></span></p>
+					<p><strong>Дата выхода:</strong> <span id="filmYear"></span></p>
+					<p><strong>Длительность:</strong> <span id="filmDuration"></span> мин</p>
+				</div>
+				<div class="right">
+					<p class="desc" id="filmDesc"></p>
+					<p><strong class="purple-text">Жанры:</strong> <span id="filmGenres"></span></p>
+					<p><strong class="purple-text">Рейтинг (iMDB):</strong> <span id="filmRating"></span></p>
+					{% if current_user.is_authenticated %}
+						<h4 style="margin: 20px 0 0 0;">Оставить отзыв</h4>
+						<div id="addReviewBlock" class="right-add">
+							<form id="addReviewForm" method="POST" action="" }}">
+								<input type="text" name="author" placeholder="Ваше имя" required class="text-field-special">
+								<input type="number" name="rating" placeholder="Рейтинг (1-10)" min="1" max="10" required class="text-field-special">
+								<textarea name="text" placeholder="Текст отзыва" required class="desc-field-special"></textarea>
+								<button type="submit" class="add-film-special">Добавить отзыв</button>
+							</form>
+						</div>
+					{% else %}
+						<p>Авторизуйтесь, чтобы добавить отзыв.</p>
+					{% endif %}
+					<h4>Отзывы:</h4>
+					<ul id="filmReviews"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="addFilmModal" class="modal">
+		<div class="modal-content">
+			<span class="close" id="closeAddFilm">&times;</span>
+
+			<form method="POST" action="{{ url_for('film_card.list_film') }}" class="film-page">
+				<div class="left">
+					<select id="posterSelect" name="image_url" class="select-field-special">
+						<option value="">Выберите постер</option>
+						{% for poster in posters_img %}
+							<option value="{{ poster }}">{{ poster }}</option>
+						{% endfor %}
+					</select>
+					<img id="posterPreview" class="poster" src="/static/images/placeholder.jpg">					
+					<input type="text" required class="text-field" name="title" placeholder="Название фильма">
+					<input type="text" required class="text-field" name="orig_title" placeholder="Оригинальное название">
+					<div>
+						<label>Дата выхода:<input type="date" style="display: inline-block; margin-left: 18px;" required class="date-field" name="release_year"></label>
+					</div>
+					<select required class="select-field" name="age_rate">
+						<option value="">Возрастное ограничение</option>
+						<option value="0+">0+</option>
+						<option value="6+">6+</option>
+						<option value="12+">12+</option>
+						<option value="16+">16+</option>
+						<option value="18+">18+</option>
+					</select>
+					<input type="text" required class="text-field" name="duration" placeholder="Длительность (мин)">
+					<button type="submit" class="add-film-special">Сохранить фильм</button>
+				</div>
+
+				<div class="right-add">
+					<textarea name="descr" class="desc-field" placeholder="Описание фильма"></textarea>
+					<div class="genre-block">
+						<div class="genre-header" id="toggleGenres">
+							<span>Нажмите, чтобы показать/скрыть жанры</span>
+						</div>
+						<div class="genre-buttons collapsed" id="genreButtons">
+							{% for genre in all_genres %}
+								<button type="button" class="genre-btn" data-id="{{ genre.genre_id }}">{{ genre.genre_name }}</button>
+							{% endfor %}
+						</div>
+					<input type="hidden" name="genres" id="selectedGenres">
+					
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div id="editFilmModal" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="closeEditFilm()">&times;</span>
+			<form id="editFilmForm" class="film-page">
+				<div class="left">
+					<select id="editPosterSelect" name="image_url" class="select-field-special">
+						<option value="">Выберите постер</option>
+							{% for poster in posters_img %}
+								<option value="{{ poster }}">{{ poster }}</option>
+ 							{% endfor %}
+					</select>
+					<img id="editPosterPreview" class="poster" src="/static/images/placeholder.jpg">
+					<input type="text" name="title" id="editTitle" class="text-field" placeholder="Название фильма">
+					<input type="text" name="orig_title" id="editOrigTitle" class="text-field" placeholder="Оригинальное название">
+					<div>
+						<label>Дата выхода:<input type="date" style="display: inline-block; margin-left: 18px;" id="editYear" required class="date-field" name="release_year"></label>
+					</div>
+					<select name="age_rate" id="editAge" class="select-field">
+						<option value="">Возрастное ограничение</option>
+						<option value="0+">0+</option>
+						<option value="6+">6+</option>
+						<option value="12+">12+</option>
+						<option value="16+">16+</option>
+						<option value="18+">18+</option>
+					</select>
+					<input type="text" name="duration" id="editDuration" class="text-field" placeholder="Длительность (мин)">
+					<button type="submit" class="add-film-special">Сохранить изменения</button>
+				</div>
+
+				<div class="right-add">
+					<textarea name="descr" id="editDesc" class="desc-field" placeholder="Описание фильма"></textarea>
+					<div class="genre-block">
+						<div class="genre-header" id="editToggleGenres">
+							<span>Нажмите, чтобы показать/скрыть жанры</span>
+						</div>
+						<div class="genre-buttons collapsed" id="editGenreButtons">
+							{% for genre in all_genres %}
+								<button type="button" class="genre-btn" data-id="{{ genre.genre_id }}">{{ genre.genre_name }}</button>
+						{% endfor %}
+						</div>
+						<input type="hidden" name="genres" id="editSelectedGenres">
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div id="filterSortModal" class="modal-sort">
+		<div class="modal-content-sort">
+			<span class="close" id="closeFilterSort">&times;</span>
+
+			<form id="filterSortForm" class="sort-page">
+				<h3 class="film-title">Фильтры и сортировка</h3>
+
+				<div class="filter-row">
+					<span class="filter-label">Сортировка:</span>
+					<select name="sort_by" id="sortBy" class="select-field">
+						<option value="">Выберите</option>
+						<option value="title_asc">Название (А-Я)</option>
+						<option value="title_desc">Название (Я-А)</option>
+						<option value="rating_asc">Рейтинг (По возрастанию)</option>
+						<option value="rating_desc">Рейтинг (По убыванию)</option>
+						<option value="year_asc">Год (По возрастанию)</option>
+						<option value="year_desc">Год (По убыванию)</option>
+					</select>
+				</div>
+
+				<div class="filter-row">
+					<span class="filter-label">Фильтр по возрасту:</span>
+					<select name="age_rate" id="filterAge" class="select-field">
+						<option value="">Все</option>
+						<option value="0+">0+</option>
+						<option value="6+">6+</option>
+						<option value="12+">12+</option>
+						<option value="16+">16+</option>
+						<option value="18+">18+</option>
+					</select>
+				</div>
+
+				<div class="filter-row">
+					<span class="filter-label">Фильтр по жанру:</span>
+					<select name="genre" id="filterGenre" class="select-field">
+						<option value="">Все</option>
+						{% for genre in all_genres %}
+							<option value="{{ genre.genre_id }}">{{ genre.genre_name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+
+				<button type="submit" class="add-film-special">Применить</button>
+			</form>
+		</div>
+	</div>
+</body>
+<script>
+	const IS_AUTHENTICATED = {{ 'true' if current_user.is_authenticated else 'false' }};
+</script>
+</html>
