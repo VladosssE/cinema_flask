@@ -6,8 +6,19 @@ from controllers.film_card_controller import bp as film_card_bp
 from controllers.review_controller import bp as review_bp
 from flask_login import LoginManager
 from models.user import User
+import pymysql
 
 def create_app(test_config=None):
+    connection = pymysql.connect( host='localhost', user='root', password='root' )
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("CREATE DATABASE IF NOT EXISTS cinema_db;")
+            cursor.execute("CREATE USER IF NOT EXISTS 'filmuser'@'%' IDENTIFIED BY 'filmfilm';")
+            cursor.execute("GRANT REFERENCES, SELECT, CREATE, INSERT, UPDATE, DELETE ON cinema_db.* TO 'filmuser'@'%';")
+            cursor.execute("FLUSH PRIVILEGES;")
+            connection.commit()
+    finally:
+        connection.close()
     app = Flask(__name__, template_folder="views", static_folder="static")
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://filmuser:filmfilm@localhost/cinema_db'
