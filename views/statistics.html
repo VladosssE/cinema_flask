@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<title>Статистика</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='mainmenu-style.css') }}">
+</head>
+<body>
+
+<header class="top-panel">
+	<h2>Статистика кинотеатра</h2>
+	<a class="menu-btn" href="{{ url_for('film_card.list_film') }}">Назад</a>
+	<div class="search-form">
+		<button class="menu-btn" onclick="window.print()">Печать</button>
+	</div>
+</header>
+
+<main class="films-container" style="flex-direction: column; gap: 20px;">
+
+	<div class="stats-card">
+		<h3 class="stat-title">Общая информация</h3>
+		<div class="stat-row">
+			<span class="stat-info">Всего фильмов:</span>
+			<span class="stat-digits">{{ total_films }}</span>
+		</div>
+		<div class="stat-row">
+			<span class="stat-info">Средний рейтинг (IMDb):</span>
+			<span class="stat-digits">{{ avg_rating }}</span>
+		</div>
+		<div class="stat-row">
+			<span class="stat-info">Всего отзывов:</span>
+			<span class="stat-digits">{{ total_reviews }}</span>
+		</div>
+	</div>
+
+	<div class="stats-card">
+		<h3 class="stat-title">Возрастные рейтинги</h3>
+		{% for age, count in films_by_age %}
+			<div class="stat-row">
+				<span class="stat-info">{{ age }}</span>
+				<span class="stat-digits">{{ count }} фильм(ов)</span>
+			</div>
+		{% endfor %}
+	</div>
+	<div class="stats-card">
+		<h3 class="stat-title">Жанры</h3>
+		{% for genre, count in films_by_genre %}
+			<div class="stat-row">
+				<span class="stat-info">{{ genre }}</span>
+				<span class="stat-digits">{{ count }}</span>
+			</div>
+		{% endfor %}
+	</div>
+</main>
+</body>
+</html>
