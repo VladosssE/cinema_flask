@@ -4,9 +4,19 @@ from models.tables import db, Films, Genre, Review
 from flask_login import login_required
 import os
 from sqlalchemy import or_, func
+from datetime import datetime
+
 
 bp = Blueprint("film_card", __name__, template_folder='templates')
 repo = FilmsRepo(db)
+
+def parse_date(date_str):
+    if not date_str:
+        return None
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        return None
 
 @bp.get("/")
 def list_film():
@@ -44,11 +54,13 @@ def list_film():
 def api_add_film():
     data = request.json
     genres_ids = data.get('genres', [])
+    release_year = parse_date(data.get('release_year'))
+
     new_film = repo.add(
         title=data.get('title'),
         orig_title=data.get('orig_title'),
         descr=data.get('descr'),
-        release_year=data.get('release_year'),
+        release_year=release_year,
         duration=data.get('duration'),
         age_rate=data.get('age_rate'),
         rating=0.0,
@@ -72,13 +84,16 @@ def api_edit_film(film_id):
     film.title = data.get('title', film.title)
     film.orig_title = data.get('orig_title', film.orig_title)
     film.descr = data.get('descr', film.descr)
-    film.release_year = data.get('release_year', film.release_year)
+    release_year_str = data.get('release_year')
+    if release_year_str is not None:
+        film.release_year = parse_date(release_year_str)
     film.duration = data.get('duration', film.duration)
     film.age_rate = data.get('age_rate', film.age_rate)
     film.image_url = data.get('image_url', film.image_url)
+
     genre_ids = data.get('genres', [])
-    
-    film.genres = Genre.query.filter(Genre.genre_id.in_(genre_ids)).all()
+    if genre_ids:
+        film.genres = Genre.query.filter(Genre.genre_id.in_(genre_ids)).all()
 
     db.session.commit()
     return jsonify({"success": True})
