@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, current_app
 from models.repo import FilmsRepo
-from models.tables import db, Films, Genre
+from models.tables import db, Films, Genre, Review
 from flask_login import login_required
 import os
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 
 bp = Blueprint("film_card", __name__, template_folder='templates')
 repo = FilmsRepo(db)
@@ -114,3 +114,39 @@ def api_film_detail(film_id):
         ],
         "reviews": [{"author": r.author, "text": r.text} for r in film.reviews]
     })
+
+@bp.route('/stats')
+def statistics():
+    ALL_AGES = ['0+', '6+', '12+', '16+', '18+']
+    total_films = db.session.query(func.count(Films.film_id)).scalar()
+    films_by_age_raw = (
+        db.session.query(Films.age_rate, func.count(Films.film_id))
+        .group_by(Films.age_rate)
+        .all()
+    )
+    films_by_age_dict = {
+        age: count for age, count in films_by_age_raw
+    }
+    films_by_age = [
+        (age, films_by_age_dict.get(age, 0))
+        for age in ALL_AGES
+    ]
+
+    films_by_genre = (
+        db.session.query(Genre.genre_name, func.count(Films.film_id))
+        .join(Genre.films)
+        .group_by(Genre.genre_name)
+        .all()
+    )
+
+    avg_rating = db.session.query(func.avg(Films.rating)).scalar()
+    total_reviews = db.session.query(func.count(Review.review_id)).scalar()
+
+    return render_template(
+        'statistics.html',
+        total_films=total_films,
+        films_by_age=films_by_age,
+        films_by_genre=films_by_genre,
+        avg_rating=round(avg_rating or 0, 1),
+        total_reviews=total_reviews
+    )
