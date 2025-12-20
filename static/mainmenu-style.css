@@ -10,6 +10,28 @@
 	src: url('/static/fonts/norwester.otf') format('opentype');
 }
 
+@media print {
+	.menu-btn,
+	@page{
+		size: landscape;
+		margin: 10mm;
+	}
+	header {
+		display: none;
+		box-shadow: none;
+		outline: none;
+		border: none;
+		background: none;
+		color: black;
+	}
+	.menu-btn{
+		display: none;
+	}
+	body {
+		background: white;
+	}
+}
+
 body{
 	margin: 0;
 	padding: 0;
@@ -566,4 +588,44 @@ body{
 .edit-review:hover, .delete-review:hover{
 	background: white;
 	color: black;
+}
+
+/* Панель статистики									007 */
+.stat-title{
+	font-family: mr_norwesterG, Courier;
+	font-size: 24px;
+}
+
+.stats-card{
+	display: block;
+	background: white;
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 0px 10px violet;
+	text-decoration: none;
+	color: black;
+	transition: transform 0.2s;
+	text-align: center;
+	height: 500px;
+	overflow-y: auto;
+}
+
+.stat-info{
+	font-family: mr_norwesterG, Courier;
+	font-size: 18px;
+	margin-left: 20px;
+}
+
+.stat-digits{
+	font-family: mr_norwesterG, Courier;
+	font-size: 18px;
+	color: purple;
+	margin-right: 20px;
+}
+
+.stat-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 6px 0;
 }
