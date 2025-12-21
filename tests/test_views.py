@@ -15,7 +15,7 @@ def test_original_title_visible(client, film):
 
 def test_genre_visible(client, genre):
     html = client.get("/").get_data(as_text=True)
-    assert "Драма" in html
+    assert genre.genre_name in html
 
 
 def test_search_found(client, film):
