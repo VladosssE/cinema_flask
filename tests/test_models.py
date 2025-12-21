@@ -1,3 +1,6 @@
+import pytest
+import uuid
+from sqlalchemy.exc import IntegrityError
 from models.tables import Films, Genre, Review, db
 
 
@@ -14,19 +17,19 @@ def test_film_has_genre(film, genre):
 
 
 def test_genre_unique_constraint(app):
-    g1 = Genre(genre_name="Комедия")
+    name = f"Комедия-{uuid.uuid4()}"
+
+    g1 = Genre(genre_name=name)
     db.session.add(g1)
     db.session.commit()
 
-    g2 = Genre(genre_name="Комедия")
+    g2 = Genre(genre_name=name)
     db.session.add(g2)
 
-    try:
+    with pytest.raises(IntegrityError):
         db.session.commit()
-        assert False
-    except Exception:
-        db.session.rollback()
-        assert True
+
+    db.session.rollback()
 
 
 def test_review_relation(app, film):
