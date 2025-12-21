@@ -33,25 +33,18 @@
 - `git clone https://github.com/VladosssE/cinema_flask.git`
 - `cd cinema_flask`
 
-2. Создайте виртуальное окружение и активируйте его
-- `python -m venv env`
-- `env\Scripts\activate` # Windows
-- `source venv/bin/activate` # macOS/Linux
-
-3. Установите зависимости
+2. Установите зависимости
 - `pip install -r requirements.txt`
 
-4. Запустите приложение
+3. Запустите приложение
 - `python app.py`
 - При первом запуске программы app.py автоматически создаст базу данных и пользователя.
 
-5. Перейдите по ссылке (http://127.0.0.1:5000)
+4. Перейдите по ссылке (http://127.0.0.1:5000)
 
 **Тестирование**
 1. Перейдите в корень проекта
 2. Запустите тесты
-- `$env:PYTHONPATH=$PWD` # Windows PowerShell
-- `set PYTHONPATH=%cd%` # Windows CMD
 - `pytest -v`
 Тесты используют SQLite in-memory, поэтому реальная база данных не затрагивается.
 
