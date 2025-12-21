@@ -1,6 +1,7 @@
 import pytest
 import sys
 import os
+import uuid
 from datetime import date
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -9,12 +10,9 @@ sys.path.append(PROJECT_ROOT)
 from app import create_app
 from models.tables import db, Films, Genre
 
+
 @pytest.fixture
 def app():
-    """
-    Создает Flask-приложение для тестов
-    Используется in-memory SQLite, чтобы не трогать реальную БД
-    """
     app = create_app({
         "TESTING": True,
         "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
@@ -28,27 +26,27 @@ def app():
         db.session.remove()
         db.drop_all()
 
+
 @pytest.fixture
 def client(app):
-    """Фикстура для тестового клиента Flask"""
     return app.test_client()
+
 
 @pytest.fixture
 def runner(app):
-    """Фикстура для тестового CLI runner"""
     return app.test_cli_runner()
+
 
 @pytest.fixture
 def genre(app):
-    """Создает тестовый жанр"""
-    g = Genre(genre_name="Драма")
+    g = Genre(genre_name=f"Драма-{uuid.uuid4()}")
     db.session.add(g)
     db.session.commit()
     return g
 
+
 @pytest.fixture
 def film(app, genre):
-    """Создает тестовый фильм с одним жанром"""
     f = Films(
         title="Тестовый фильм",
         orig_title="Test Movie",
