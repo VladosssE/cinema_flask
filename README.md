@@ -35,8 +35,8 @@
 
 2. Создайте виртуальное окружение и активируйте его
 - `python -m venv env`
-- `venv\Scripts\activate` # Windows
-- `source venv/bin/activate` # macOS/Linux
+- `env\Scripts\activate` # Windows
+- `source env/bin/activate` # macOS/Linux
 
 3. Установите зависимости
 - `pip install -r requirements.txt`
