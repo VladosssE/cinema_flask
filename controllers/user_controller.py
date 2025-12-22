@@ -1,34 +1,46 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models.user import User, db
+from models.user import UserRepo, User, db
 
 bp = Blueprint("user", __name__, url_prefix="/users")
+repo = UserRepo()
 
 @bp.route('/', methods=['GET', 'POST'])
 @login_required
 def list_users():
     if request.method == "POST":
         action = request.form.get("action")
-        user_id = int(request.form.get("user_id"))
-        user = User.query.get_or_404(user_id)
 
-        if action == "update":
-            new_username = request.form.get("username")
-            existing_user = User.query.filter(User.username == new_username, User.id != user_id).first()
-            if existing_user:
+        if action == "add":
+            username = request.form.get("username")
+            password = request.form.get("password")
+            if repo.get_by_username(username):
                 flash("Пользователь уже существует", "error")
             else:
-                user.username = new_username
-                db.session.commit()
-                flash("Пользователь изменен", "success")
+                repo.add(username, password)
+                flash("Пользователь добавлен", "success")
 
-        elif action == "delete":
-            if user.id == current_user.id:
-                flash("Удаление самого себя (Ну нельзя)", "error")
-            else:
-                db.session.delete(user)
-                db.session.commit()
-                flash("Пользователь удалён", "info")
+        else:
+            user_id = int(request.form.get("user_id"))
+            user = User.query.get_or_404(user_id)
+
+            if action == "update":
+                new_username = request.form.get("username")
+                existing_user = User.query.filter(User.username == new_username, User.id != user_id).first()
+                if existing_user:
+                    flash("Пользователь уже существует", "error")
+                else:
+                    user.username = new_username
+                    db.session.commit()
+                    flash("Пользователь изменен", "success")
+
+            elif action == "delete":
+                if user.id == current_user.id:
+                    flash("Удаление самого себя (Ну нельзя)", "error")
+                else:
+                    db.session.delete(user)
+                    db.session.commit()
+                    flash("Пользователь удалён", "info")
 
         return redirect(url_for("user.list_users"))
 
