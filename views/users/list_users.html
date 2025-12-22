@@ -22,10 +22,11 @@
 
 		<table class="all-table">
 			<tr>
-				<form method="POST" action="{{ url_for('auth.register') }}" class="all-form" autocomplete="off" style="display: table-row;">
+				<form method="POST" action="{{ url_for('user.list_users') }}" class="all-form" autocomplete="off" style="display: table-row;">
 					<td style="display:flex; justify-content:center; gap: 8px;">
 						<input type="text" name="username" placeholder="Логин" required class="text-field">
 						<input type="password" name="password" placeholder="Пароль" required class="text-field">
+						<input type="hidden" name="action" value="add">
 						<button type="submit" class="button primary" style="cursor:pointer; width: 210px; border:none;">Добавить пользователя</button>
 					</td>
 				</form>
@@ -35,7 +36,7 @@
 		<table class="all-table">
 			{% for user in users %}
 				<tr>
-					<form method="POST" style="display: table-row;">
+					<form method="POST" action="{{ url_for('user.list_users') }}" style="display: table-row;">
 						<td style="display:flex; justify-content:center; gap: 8px;">
 							<input type="text" value="{{ user.id }}" disabled class="text-field" style="width: 40px; text-align:center;">
 							<input type="text" name="username" value="{{ user.username }}" class="text-field" style="width: 400px;" required>
