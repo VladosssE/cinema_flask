@@ -1,0 +1,126 @@
+@font-face{
+	font-family: 'mr_norwesterG';
+	src: url('/static/fonts/mr_norwesterG.otf') format('opentype');
+}
+
+@font-face{
+	font-family: 'Norwester';
+	src: url('/static/fonts/norwester.otf') format('opentype');
+}
+
+body{
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 150px;
+	margin: 0;
+	font-family: mr_norwesterG, Courier;
+}
+
+.container{
+	max-width: 1000px;
+	width: 100%;
+	background: white;
+	padding: 24px;
+	border-radius: 5px;
+	box-shadow: 0 0px 20px violet;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+}
+
+.title{
+	font-family: mr_norwesterG, Courier;
+	font-size: 32px;
+}
+
+.text-field{
+	font-family: mr_norwesterG, Courier;
+	padding: 6px 14px;
+	width: 175px;
+}
+
+.text{
+	margin: 0 0 0 0;
+	text-align: left;
+}
+
+.flash-messages{
+	padding: 0;
+	margin: 0;
+	color: orange;
+}
+
+.flash-messages p{
+	padding: 0;
+	margin: 0;
+}
+
+.all-table{
+	width: 100%;
+	text-align: center;
+}
+
+.all-table th{
+    	font-size: 24px;
+	vertical-align: middle;
+    	font-weight: plain;
+	padding: 10px;
+}
+
+.button.primary{
+	font-family: mr_norwesterG, Courier;
+	background: violet;
+	color: white;
+	padding: 10px 20px;
+	border-radius: 5px;
+	text-decoration: none;
+	transition: 0.1s;
+	cursor: pointer;
+	border: 2px solid violet;
+	border-radius: 5px;
+}
+
+.button.primary:hover{
+	background: purple;
+	transform: scale(0.97);
+}
+
+.button-delete{
+	cursor:pointer;
+	border:none;
+	background-color: red;
+	color:white;
+	font-family: mr_norwesterG, Courier;
+	width: 100px;
+	border-radius: 5px;
+}
+
+.button-delete:hover{
+	background-color: crimson;
+}
+
+.button-redact{
+	cursor:pointer;
+	border:none;
+	background-color: orange;
+	color:white;
+	font-family: mr_norwesterG, Courier;
+	width: 100px;
+}
+
+.button-redact:hover{
+	background-color: darkorange;
+}
+
+.button {
+	display:flex;
+	padding:8px 14px;
+	border-radius:0px;
+	text-decoration:none;
+	border:1px solid #000000;
+	width: 100px;
+	justify-content: center;
+}

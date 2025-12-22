@@ -10,6 +10,8 @@ from datetime import datetime
 bp = Blueprint("film_card", __name__, template_folder='templates')
 repo = FilmsRepo(db)
 
+
+#Форматирование даты (Чтобы работала переменная db.Date())
 def parse_date(date_str):
     if not date_str:
         return None
@@ -18,12 +20,12 @@ def parse_date(date_str):
     except ValueError:
         return None
 
+
+#Вывод фильмов из базы данных на страницу и функция поиска
 @bp.get("/")
 def list_film():
     search = request.args.get("q", "").strip()
-
     query = Films.query
-
     if search:
         query = query.filter(
             or_(
@@ -42,13 +44,10 @@ def list_film():
         and f.lower() not in ("placeholder.jpg", "no_film.jpg")
     ]
 
-    return render_template(
-        "index.html",
-        films=films,
-        posters_img=sorted(posters_img),
-        all_genres=all_genres
-    )
+    return render_template("index.html", films=films, posters_img=sorted(posters_img), all_genres=all_genres)
 
+
+#Добавление фильма
 @bp.route("/api/film/add", methods=["POST"])
 @login_required
 def api_add_film():
@@ -75,6 +74,7 @@ def api_add_film():
     return jsonify({"success": True, "film_id": new_film.film_id})
 
 
+#Изменение фильма
 @bp.route("/api/film/<int:film_id>/edit", methods=["POST"])
 @login_required
 def api_edit_film(film_id):
@@ -99,6 +99,7 @@ def api_edit_film(film_id):
     return jsonify({"success": True})
 
 
+#Удаление фильма
 @bp.route('/film/<int:film_id>/delete', methods=['POST'])
 @login_required
 def delete_film(film_id):
@@ -108,6 +109,7 @@ def delete_film(film_id):
     return redirect(url_for('film_card.list_film'))
 
 
+#Подробности фильма в модальном окне
 @bp.route('/api/film/<int:film_id>')
 def api_film_detail(film_id):
     film = Films.query.get_or_404(film_id)
@@ -130,6 +132,8 @@ def api_film_detail(film_id):
         "reviews": [{"author": r.author, "text": r.text} for r in film.reviews]
     })
 
+
+#Статистика
 @bp.route('/stats')
 def statistics():
     ALL_AGES = ['0+', '6+', '12+', '16+', '18+']

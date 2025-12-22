@@ -3,12 +3,16 @@ from sqlalchemy import text
 
 db = SQLAlchemy()
 
+
+#Промежуточная таблица фильмов и жанров
 film_genre = db.Table(
     'film_genre',
     db.Column('film_id', db.Integer, db.ForeignKey('films.film_id'), primary_key=True),
     db.Column('genre_id', db.Integer, db.ForeignKey('genre.genre_id'), primary_key=True)
 )
 
+
+#Таблица фильмов
 class Films(db.Model):
     __tablename__ = 'films'
     film_id = db.Column(db.Integer, primary_key=True)
@@ -26,6 +30,7 @@ class Films(db.Model):
         return f'<Films {self.title}>'
 
 
+#Таблица жанров
 class Genre(db.Model):
     __tablename__ = 'genre'
     genre_id = db.Column(db.Integer, primary_key=True)
@@ -35,6 +40,7 @@ class Genre(db.Model):
         return f'<Genre {self.genre_name}>'
 
 
+#Таблица отзывов
 class Review(db.Model):
     __tablename__ = 'review'
     review_id = db.Column(db.Integer, primary_key=True)

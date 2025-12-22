@@ -1,0 +1,121 @@
+@media print {
+	.menu-btn,
+	@page{
+		size: landscape;
+		margin: 10mm;
+	}
+	header {
+		display: none;
+		box-shadow: none;
+		outline: none;
+		border: none;
+		background: none;
+		color: black;
+	}
+	.menu-btn{
+		display: none;
+	}
+	body {
+		background: white;
+	}
+}
+
+@font-face{
+	font-family: 'mr_norwesterG';
+	src: url('/static/fonts/mr_norwesterG.otf') format('opentype');
+}
+
+@font-face{
+	font-family: 'Norwester';
+	src: url('/static/fonts/norwester.otf') format('opentype');
+}
+
+body{
+	margin: 0;
+	padding: 0;
+	font-family: mr_norwesterG, Courier;
+	background: black;
+}
+
+.stats-container{
+	padding: 40px;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+	gap: 40px;
+}
+
+.top-panel{
+	width: 100%;
+	height: 60px;
+	background: white;
+	display: flex;
+	align-items: center;
+	padding: 0 20px;
+	gap: 20px;
+	box-shadow: 0 0 100px violet;
+	box-sizing: border-box;
+}
+
+.menu-btn{
+	font-family: mr_norwesterG, Courier;
+	background: violet;
+	color: white;
+	padding: 10px 20px;
+	border-radius: 5px;
+	text-decoration: none;
+	transition: 0.1s;
+	cursor: pointer;
+	border: 2px solid violet;
+	font-size: 16px;
+}
+
+.menu-btn:hover{
+	background: purple;
+	transform: scale(0.97);
+}
+
+.search-form{
+	margin-left: auto;
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.stat-title{
+	font-family: mr_norwesterG, Courier;
+	font-size: 24px;
+}
+
+.stats-card{
+	display: block;
+	background: white;
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 0px 10px violet;
+	text-decoration: none;
+	color: black;
+	transition: transform 0.2s;
+	text-align: center;
+	height: 500px;
+	overflow-y: auto;
+}
+
+.stat-info{
+	font-family: mr_norwesterG, Courier;
+	font-size: 18px;
+	margin-left: 20px;
+}
+
+.stat-digits{
+	font-family: mr_norwesterG, Courier;
+	font-size: 18px;
+	color: purple;
+	margin-right: 20px;
+}
+
+.stat-row{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 6px 0;
+}

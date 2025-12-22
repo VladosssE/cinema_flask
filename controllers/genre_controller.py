@@ -6,6 +6,8 @@ from flask_login import login_required
 bp = Blueprint("genre", __name__, url_prefix="/genre")
 repo = GenreRepo(db)
 
+
+#Вывод всех жанров
 @bp.get("/")
 @login_required
 def list_genre():
@@ -15,7 +17,7 @@ def list_genre():
 
 @bp.post("/")
 def create_genre():
-    genre_name = reqeusrt.form.get("genre_name")
+    genre_name = request.form.get("genre_name")
     budget = request.form.get("budget")
     budget_got = request.form.get("budget_got")
     country_prod = request.form.get("country_prod")
