@@ -1,12 +1,16 @@
 # cinema_flask
 Репозиторий, содержащий приложение об учете фильмов, созданное на Flask
 
+![alt text](https://github.com/VladosssE/cinema_flask/blob/main/git_images/mainmenu.png?raw=true)
+
 **Приложение позволяет:**
 - Просматривать полную информацию о фильмах
 - Фильтровать и сортировать фильмы
 - Искать нужные фильмы
 - Добавлять, изменять и удалять отзывы (только для авторизованных пользователей)
 - Добавлять, изменять и удалять фильмы (только для авторизованных пользователей)
+
+![alt text](https://github.com/VladosssE/cinema_flask/blob/main/git_images/film_modal.png?raw=true)
 
 **Особенности:**
 - База данных создана на SQLlite
