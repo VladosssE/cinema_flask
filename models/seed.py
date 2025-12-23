@@ -282,7 +282,9 @@ def seed_users():
     ]
 
     for uid, uname, upass in users:
-        db.session.add(User(id=uid, username=uname, password_hash=upass))
+        user = User(id=uid, username=uname)
+        user.set_password(upass)
+        db.session.add(user)
 
     db.session.commit()
     print("[ 006 ][ 50 пользователей было добавлено при первом запуске      ]")
