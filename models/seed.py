@@ -1,5 +1,6 @@
 from .tables import db, Genre, Films, film_genre, Review
 from .user import User
+from controllers.review_controller import redac_film_rating
 from datetime import datetime
 
 #Добавление жанров (75)
@@ -216,6 +217,10 @@ def seed_reviews():
 
     db.session.commit()
     print("[ 004 ][ 100 отзывов к фильмам было добавлено при первом запуске ]")
+    film_ids = set(r[4] for r in reviews)
+    for film_id in film_ids:
+        redac_film_rating(int(film_id))
+    print("[ 005 ][ Средний рейтинг для 20 фильмов был рассчитан            ]")
 
 
 #Добавление пользователей (50)
@@ -280,4 +285,4 @@ def seed_users():
         db.session.add(User(id=uid, username=uname, password_hash=upass))
 
     db.session.commit()
-    print("[ 005 ][ 50 пользователей было добавлено при первом запуске      ]")
+    print("[ 006 ][ 50 пользователей было добавлено при первом запуске      ]")
