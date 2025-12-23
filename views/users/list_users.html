@@ -40,6 +40,7 @@
 						<td style="display:flex; justify-content:center; gap: 8px;">
 							<input type="text" value="{{ user.id }}" disabled class="text-field" style="width: 40px; text-align:center;">
 							<input type="text" name="username" value="{{ user.username }}" class="text-field" style="width: 400px;" required>
+							<!<input type="text" name="username" value="{{ user.password_hash }}" class="text-field" style="width: 400px;" required>
 							<input type="hidden" name="user_id" value="{{ user.id }}">
 							<button type="submit" name="action" value="update" class="button-redact">Изменить</button>
 							<button type="submit" name="action" value="delete" class="button-delete" onclick="return confirm('Удалить пользователя?');">Удалить</button>
